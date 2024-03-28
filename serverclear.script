@@ -1,0 +1,141 @@
+var target = "n00dles";
+var failedattemptcount = 0;
+var successfulattemptcount = 0;
+
+servers = ["n00dles", "foodnstuff", "sigma-cosmetics", "joesguns", "hong-fang-tea", "harakiri-sushi", "iron-gym", "darkweb", "max-hardware", "zer0", "nectar-net", "CSEC", "neo-net", "phantasy", "omega-net", "silver-helix", "the-hub", "netlink", "johnson-ortho", "avmnite-02h", "comptek", "crush-fitness", "catalyst", "syscore", "I.I.I.I", "rothman-uni", "summit-uni", "zb-institute", "lexo-corp", "alpha-ent", "millenium-fitness", "rho-construction", "aevum-police", "galactic-cyber", "aerocorp", "global-pharm", "snap-fitness", "omnia", "unitalife", "deltaone", "defcomm", "solaris", "icarus", "univ-energy", "zeus-med", "infocomm", "taiyang-digital", "zb-def", "nova-med", "titan-labs", "applied-energetics", "microdyne", "run4theh111z", "fulcrumtech", "stormtech", "helios", "vitalife", "kuai-gong", ".", "omnitek", "4sigma", "clarkinc", "powerhouse-fitness", "b-and-a", "blade", "nwo", "ecorp", "megacorp", "fulcrumassets", "The-Cave"];
+failedattempt = [];
+successfulattempt = [];
+for(i=0; i < servers.length; ++i)
+{
+	target = servers[i];
+	var portsopen = 0;
+	if(serverExists(target)){
+		// If we have the BruteSSH.exe program, use it to open the SSH Port
+		// on the target server
+		if (fileExists("BruteSSH.exe", "home")) {
+			brutessh(target);
+			portsopen++;
+		}
+
+		// If we have the FTPCrack.exe program, use it to open the FTP Port
+		// on the target server
+		if (fileExists("FTPCrack.exe", "home")) {
+			ftpcrack(target);
+			portsopen++;
+		}
+
+		// If we have the HTTPWorm.exe program, use it to open the HTTP Port
+		// on the target server
+		if (fileExists("HTTPWorm.exe", "home")) {
+			httpworm(target);
+			portsopen++;
+		}
+
+		// If we have the SQLInject.exe program, use it to open the SQL Port
+		// on the target server
+		if (fileExists("SQLInject.exe", "home")) {
+			sqlinject(target);
+			portsopen++;
+		}
+
+		// If we have the relaySMTP.exe program, use it to open the SMTP Port
+		// on the target server
+		if (fileExists("relaySMTP.exe", "home")) {
+			relaysmtp(target);
+			portsopen++;
+		}
+
+		print(getServerNumPortsRequired(target) + " port(s) needs to be opened.");
+		print(portsopen + " port(s) have been opened.");
+
+		// Get root access to target server
+		if (hasRootAccess(target) == true) {
+			successfulattempt[successfulattemptcount] = target;
+			print("You already have root access to " + target);
+			print("The servers that you have gotten root access to are:");
+			for (j=0; j < successfulattempt.length; ++j){
+				print(successfulattempt[j]);
+				//print("\n");
+			}
+			successfulattemptcount++;
+			var serverRam = getServerRam(target);
+			if (serverRam[0] > 2.2)
+			{
+				killall(target);
+				scp("hack.js", target);
+				exec("hack.js", target, Math.floor(serverRam[0]/2.2));
+			}	
+
+			// Acquire a reference to the terminal text field
+			const terminalInput = document.getElementById("terminal-input");
+			// Set the value to the command you want to run.
+			terminalInput.value="connect " + target + "; backdoor";
+			// Get a reference to the React event handler.
+			const handler = Object.keys(terminalInput)[1];
+			await ns.sleep(100);
+			// Perform an onChange event to set some internal values.
+			terminalInput[handler].onChange({target:terminalInput});
+			await ns.sleep(100);
+			// Simulate an enter press
+			terminalInput[handler].onKeyDown({keyCode:13,preventDefault:()=>null});
+			await ns.sleep(100);
+
+		}
+		else if (portsopen >= getServerNumPortsRequired(target)) {
+			nuke(target);
+			successfulattempt[successfulattemptcount] = target;
+			print("You now have root access to " + target);
+			print("The servers that you have gotten root access to are:");
+			for (j=0; j < successfulattempt.length; ++j){
+				print(successfulattempt[j]);
+				//print("\n");
+			}
+			successfulattemptcount++;
+			var serverRam = getServerRam(target);
+			if (serverRam[0] > 2.2)
+			{
+				killall(target);
+				scp("hack.js", target);
+				exec("hack.js", target, Math.floor(serverRam[0]/2.2));
+			}	
+		}
+		else {
+			failedattempt[failedattemptcount] = target;
+			print("Getting Root Access to " + target + " has failed.")
+			print("The servers that have failed to get root access to are:");
+			for (j=0; j < failedattempt.length; ++j){
+				print(failedattempt[j]);
+				//print("\n");
+			}
+			failedattemptcount++;
+		}
+		//installBackdoor(target);		
+	}
+	else {
+		failedattempt[failedattemptcount] = target;
+		print("Getting Root Access to " + target + " has failed.")
+		print("The servers that have failed to get root access to are:");
+		for (j=0; j < failedattempt.length; ++j) {
+			print(failedattempt[j]);
+			//print("\n");
+		}
+		failedattemptcount++;
+	}
+}
+
+//Keeps script running in Active Scripts
+//So we can check the logs
+while(true)
+{	
+	print("The servers that you have gotten root access to are:");
+	for (j=0; j < successfulattempt.length; ++j){
+		print(successfulattempt[j]);
+		//print("\n");
+	}
+	print("The servers that have failed to get root access to are:");
+		for (j=0; j < failedattempt.length; ++j) {
+			print(failedattempt[j]);
+			//print("\n");
+		}
+	sleep(30000);
+}
