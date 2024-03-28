@@ -1,0 +1,11 @@
+var i = 0;
+
+while (i < 25) {
+	var hostname = "Server-" + i;
+	killall(hostname); 
+	scp("hack.js", hostname);
+	exec("hack.js", hostname, 7447); //Change this
+	//scp("hack.js", hostname);
+	//exec("hack.js", hostname, 29);
+	++i;
+}
